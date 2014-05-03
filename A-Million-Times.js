@@ -34,10 +34,15 @@
 
     Clock.prototype.turn = function(hand, angle, time) {
         function recur(rHand) {
+            var length = CLOCK_SIZE;
+            if(rHand == "hr"){
+                length*=HR_TO_MIN_RATIO;
+            }
+
             if (angle > ANGLE_STEP) {
                 angle -= ANGLE_STEP;
                 obj[rHand + "Angle"] = cirAngle(obj[rHand + "Angle"], -1 * ANGLE_STEP);
-                obj[rHand + "Hand"].animate({"path": "M" + obj.x + "," + obj.y + "l" + CLOCK_SIZE * Math.cos(rad(obj[rHand + "Angle"])) + "," + -1 * CLOCK_SIZE * Math.sin(rad(obj[rHand + "Angle"]))},
+                obj[rHand + "Hand"].animate({"path": "M" + obj.x + "," + obj.y + "l" + length * Math.cos(rad(obj[rHand + "Angle"])) + "," + -1 * length * Math.sin(rad(obj[rHand + "Angle"]))},
                 stepTime,
                         "linear",
                         function() {
@@ -45,7 +50,7 @@
                         });
             } else {
                 obj[rHand + "Angle"] = cirAngle(obj[rHand + "Angle"], -1 * angle);
-                obj[rHand + "Hand"].animate({"path": "M" + obj.x + "," + obj.y + "l" + CLOCK_SIZE * Math.cos(rad(obj[rHand + "Angle"])) + "," + -1 * CLOCK_SIZE * Math.sin(rad(obj[rHand + "Angle"]))},
+                obj[rHand + "Hand"].animate({"path": "M" + obj.x + "," + obj.y + "l" + length * Math.cos(rad(obj[rHand + "Angle"])) + "," + -1 * length * Math.sin(rad(obj[rHand + "Angle"]))},
                 stepTime * (angle / ANGLE_STEP),
                         "linear");
             }
@@ -65,6 +70,11 @@
         angle = cirAngle(angle);
         angle += extraRounds*360;
         this.turn(hand, angle, time);
+    }
+
+    function Scheme(minData, hrData){
+        this.minData = minData;
+        this.hrData = hrData;
     }
 
     function rad(deg) {
