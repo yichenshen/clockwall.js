@@ -24,8 +24,10 @@
         this.minAngle = 90.0;
         this.hrAngle = 270.0;
 
-        this.paper = paper;
+        this.minCount = 0;
+        this.hrCount = 0;
 
+        this.paper = paper;
 
         paper.circle(x, y, CLOCK_SIZE);
         this.minHand = paper.path("M" + x + "," + y + "l0,-" + CLOCK_SIZE);
@@ -70,12 +72,30 @@
         angle = cirAngle(angle);
         angle += extraRounds*360;
         this.turn(hand, angle, time);
-    }
+    };
 
     function Scheme(minData, hrData){
         this.minData = minData;
         this.hrData = hrData;
     }
+
+    Scheme.prototype.callBackFunction = function(x, y, hand){
+        
+        var list = this[hand + "Data"][x][y];
+
+        var func = function(clock){
+            return function(){
+                var count = clock[hand+"Count"];
+                if(count < list.length){
+                    var instruct = list[count];
+                    clock[hand+"Count"]++;
+                    clock.turn(hand, instruct[0],instruct[1]);
+                }
+            }
+        };
+
+        return func;
+    };
 
     function rad(deg) {
         return deg / 180 * Math.PI;
@@ -95,6 +115,19 @@
         return angle;
     }
 
+/*
+    function create2DArray(cols, rows, iniVal){
+        var array = new Array(cols);
+        for (var i = 0; i < array.length; i++) {
+            array[i] = new Array(rjws);
+            for (var j = 0; j < array[i].length; j++) {
+                   array[i][j] = iniVal;
+               };   
+        };
+
+        return array;
+    }
+*/
     env.AMillionTimes = function(width, height) {
         this.paper = Raphael(20, 20, width, height);
 
