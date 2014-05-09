@@ -35,36 +35,9 @@
     }
 
     Clock.prototype.turn = function(hand, angle, time, endFunc) {
-        function recur(rHand) {
-            var length = CLOCK_SIZE;
-            if(rHand == "hr"){
-                length*=HR_TO_MIN_RATIO;
-            }
+        this[hand+"Angle"] = cirAngle(this[hand+"Angle"], -1*angle);
+        this[hand+"Hand"].animate({"transform": "r" + angle + "," + this.x + "," + this.y}, time, endFunc(this));
 
-            if (angle > ANGLE_STEP) {
-                angle -= ANGLE_STEP;
-                obj[rHand + "Angle"] = cirAngle(obj[rHand + "Angle"], -1 * ANGLE_STEP);
-                obj[rHand + "Hand"].animate({"path": "M" + obj.x + "," + obj.y + "l" + length * Math.cos(rad(obj[rHand + "Angle"])) + "," + -1 * length * Math.sin(rad(obj[rHand + "Angle"]))},
-                stepTime,
-                        "linear",
-                        function() {
-                            recur(rHand)
-                        });
-            } else {
-                obj[rHand + "Angle"] = cirAngle(obj[rHand + "Angle"], -1 * angle);
-                obj[rHand + "Hand"].animate({"path": "M" + obj.x + "," + obj.y + "l" + length * Math.cos(rad(obj[rHand + "Angle"])) + "," + -1 * length * Math.sin(rad(obj[rHand + "Angle"]))},
-                stepTime * (angle / ANGLE_STEP),
-                        "linear",
-                        endFunc(obj));
-            }
-
-        }
-
-        var stepTime = 1.0 * time / (angle / ANGLE_STEP);
-        var obj = this;
-
-
-        recur(hand);
     };
 
     Clock.prototype.turnTo = function(hand, posAngle, extraRounds ,time){
@@ -137,9 +110,16 @@
     env.AMillionTimes = function(width, height) {
         this.paper = Raphael(20, 20, width, height);
 
-        var c = new Clock(50, 50, this.paper);
-        c.turn("min", 360, 10000, function(){
-            c.turn("hr",360, 10000, function(){});
-        });
+        for(var i=0;i<5;i++){
+            for(var j=0;j<5;j++){
+                var c = new Clock(50+i*2*CLOCK_SIZE, 50+j*2*CLOCK_SIZE, this.paper);
+                c.turn("min", 360, 10000, function(obj){
+                    return function(){
+                        obj.turn("hr",360, 10000, function(){});    
+                    };
+                });    
+            }
+        }
     }
+
 })(this);
