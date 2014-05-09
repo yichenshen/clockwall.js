@@ -34,7 +34,7 @@
         this.hrHand = paper.path("M" + x + "," + y + "l0," + CLOCK_SIZE * HR_TO_MIN_RATIO);
     }
 
-    Clock.prototype.turn = function(hand, angle, time) {
+    Clock.prototype.turn = function(hand, angle, time, endFunc) {
         function recur(rHand) {
             var length = CLOCK_SIZE;
             if(rHand == "hr"){
@@ -54,7 +54,8 @@
                 obj[rHand + "Angle"] = cirAngle(obj[rHand + "Angle"], -1 * angle);
                 obj[rHand + "Hand"].animate({"path": "M" + obj.x + "," + obj.y + "l" + length * Math.cos(rad(obj[rHand + "Angle"])) + "," + -1 * length * Math.sin(rad(obj[rHand + "Angle"]))},
                 stepTime * (angle / ANGLE_STEP),
-                        "linear");
+                        "linear",
+                        endFunc(obj));
             }
 
         }
@@ -74,6 +75,11 @@
         this.turn(hand, angle, time);
     };
 
+    Clock.prototype.resetCount = function(callback){
+        this.minCount = 0;
+        this.hrCount = 0;
+    }
+
     function Scheme(minData, hrData){
         this.minData = minData;
         this.hrData = hrData;
@@ -89,7 +95,7 @@
                 if(count < list.length){
                     var instruct = list[count];
                     clock[hand+"Count"]++;
-                    clock.turn(hand, instruct[0],instruct[1]);
+                    clock.turn(hand, instruct[0],instruct[1], func);
                 }
             }
         };
@@ -132,7 +138,8 @@
         this.paper = Raphael(20, 20, width, height);
 
         var c = new Clock(50, 50, this.paper);
-        c.turn("min", 360, 10000);
-        c.turn("hr",360, 10000);
+        c.turn("min", 360, 10000, function(){
+            c.turn("hr",360, 10000, function(){});
+        });
     }
 })(this);
