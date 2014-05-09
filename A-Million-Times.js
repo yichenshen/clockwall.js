@@ -21,8 +21,8 @@
         this.x = x;
         this.y = y;
 
-        this.minAngle = 90.0;
-        this.hrAngle = 270.0;
+        this.minAngle = 0;
+        this.hrAngle = 0;
 
         this.minCount = 0;
         this.hrCount = 0;
@@ -35,23 +35,20 @@
     }
 
     Clock.prototype.turn = function(hand, angle, time, endFunc) {
-        this[hand+"Angle"] = cirAngle(this[hand+"Angle"], -1*angle);
-        this[hand+"Hand"].animate({"transform": "r" + angle + "," + this.x + "," + this.y}, time, endFunc(this));
+        this[hand+"Angle"] += angle;
+        this[hand+"Hand"].animate({"transform": "r" + this[hand+"Angle"] + "," + this.x + "," + this.y}, time, endFunc(this));
 
     };
 
-    Clock.prototype.turnTo = function(hand, posAngle, extraRounds ,time){
-        var angle = posAngle - this[hand+"Angle"];
-
-        angle = cirAngle(angle);
-        angle += extraRounds*360;
-        this.turn(hand, angle, time);
-    };
-
-    Clock.prototype.resetCount = function(callback){
+    Clock.prototype.resetCount = function(){
         this.minCount = 0;
         this.hrCount = 0;
-    }
+    };
+
+    Clock.prototype.resetAngle = function(){
+        this.minAngle = 0;
+        this.hrAngle = 0;
+    };
 
     function Scheme(minData, hrData){
         this.minData = minData;
@@ -76,24 +73,6 @@
         return func;
     };
 
-    function rad(deg) {
-        return deg / 180 * Math.PI;
-    }
-
-    function deg(rad) {
-        return rad / Math.PI * 180;
-    }
-
-    function cirAngle(angle, step) {
-        angle += step;
-
-        if (angle < 0) {
-            angle += 360;
-        }
-        angle %= 360;
-        return angle;
-    }
-
 /*
     function create2DArray(cols, rows, iniVal){
         var array = new Array(cols);
@@ -110,16 +89,12 @@
     env.AMillionTimes = function(width, height) {
         this.paper = Raphael(20, 20, width, height);
 
-        for(var i=0;i<5;i++){
-            for(var j=0;j<5;j++){
-                var c = new Clock(50+i*2*CLOCK_SIZE, 50+j*2*CLOCK_SIZE, this.paper);
-                c.turn("min", 360, 10000, function(obj){
-                    return function(){
-                        obj.turn("hr",360, 10000, function(){});    
-                    };
-                });    
-            }
-        }
+        var s = new Scheme([[[[180, 2000],[270, 2000], [720, 10000]],[[90,2000],[180,2000],[-188, 2000], [-180, 2000]]]],[]);
+        var clock1 = new Clock(50,50, this.paper);
+        var clock2 = new Clock(50,50+2*CLOCK_SIZE,this.paper);
+
+        s.callBackFunction(0,0, "min")(clock1)();
+        s.callBackFunction(0,1,"min")(clock2)();
     }
 
 })(this);
