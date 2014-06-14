@@ -89,7 +89,14 @@
     env.AMillionTimes = function(width, height) {
         this.paper = Raphael(20, 20, width, height);
 
-        var s = new Scheme([[[[180, 2000],[270, 2000], [720, 10000]],[[90,2000],[180,2000],[-188, 2000], [-180, 2000]]]],[]);
+       console.log(schemes);
+
+       var select = Math.floor(Math.random()*schemes.length);
+
+       var hrScheme = schemes[select].hrHand;
+       var minScheme = schemes[select].minHand;
+
+        var s = new Scheme(minScheme,hrScheme);
         var clock1 = new Clock(50,50, this.paper);
         var clock2 = new Clock(50,50+2*CLOCK_SIZE,this.paper);
 
