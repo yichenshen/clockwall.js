@@ -86,15 +86,15 @@
         return array;
     }
 */
-    env.AMillionTimes = function(width, height) {
+    env.clockwall = function(width, height) {
         this.paper = Raphael(20, 20, width, height);
 
-       console.log(schemes);
+        console.log(schemes);
 
-       var select = Math.floor(Math.random()*schemes.length);
+        var select = Math.floor(Math.random()*schemes.length);
 
-       var hrScheme = schemes[select].hrHand;
-       var minScheme = schemes[select].minHand;
+        var hrScheme = schemes[select].hrHand;
+        var minScheme = schemes[select].minHand;
 
         var s = new Scheme(minScheme,hrScheme);
         var clock1 = new Clock(50,50, this.paper);
