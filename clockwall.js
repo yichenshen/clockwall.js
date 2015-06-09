@@ -13,8 +13,7 @@
 
     var NUM_CLOCKS_X = 30;
     var NUM_CLOCKS_Y = 20;
-    var CLOCK_SIZE = 20;
-    var ANGLE_STEP = 1;
+    var CLOCK_SIZE = 15;
     var HR_TO_MIN_RATIO = 0.9;
 
     function Clock(x, y, paper) {
@@ -36,7 +35,8 @@
 
     Clock.prototype.turn = function(hand, angle, time, endFunc) {
         this[hand+"Angle"] += angle;
-        this[hand+"Hand"].animate({"transform": "r" + this[hand+"Angle"] + "," + this.x + "," + this.y}, time, endFunc(this));
+        var anim = Raphael.animation({"transform": "r" + this[hand+"Angle"] + "," + this.x + "," + this.y}, time, endFunc(this));
+        this[hand+"Hand"].animate(anim);
 
     };
 
@@ -73,19 +73,6 @@
         return func;
     };
 
-/*
-    function create2DArray(cols, rows, iniVal){
-        var array = new Array(cols);
-        for (var i = 0; i < array.length; i++) {
-            array[i] = new Array(rjws);
-            for (var j = 0; j < array[i].length; j++) {
-                   array[i][j] = iniVal;
-               };   
-        };
-
-        return array;
-    }
-*/
     env.clockwall = function(width, height) {
         this.paper = Raphael(20, 20, width, height);
 
@@ -97,11 +84,14 @@
         var minScheme = schemes[select].minHand;
 
         var s = new Scheme(minScheme,hrScheme);
-        var clock1 = new Clock(50,50, this.paper);
-        var clock2 = new Clock(50,50+2*CLOCK_SIZE,this.paper);
-
-        s.callBackFunction(0,0, "min")(clock1)();
-        s.callBackFunction(0,1,"min")(clock2)();
+        
+        for(var i = 0; i < NUM_CLOCKS_X; i++){
+            for(var j = 0; j < NUM_CLOCKS_Y; j++){
+                var clock = new Clock(CLOCK_SIZE + i * 2 * CLOCK_SIZE, CLOCK_SIZE + j * 2 * CLOCK_SIZE, this.paper);
+                s.callBackFunction(i, j, "min")(clock)();
+                s.callBackFunction(i, j, "hr")(clock)();
+            };
+        };
     }
 
 })(this);
