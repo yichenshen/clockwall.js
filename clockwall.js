@@ -77,8 +77,6 @@
     env.clockwall = function(width, height) {
         this.paper = Raphael(20, 20, width, height);
 
-        console.log(schemes);
-
         var select = Math.floor(Math.random()*schemes.length);
 
         var hrScheme = schemes[select].hrHand;
