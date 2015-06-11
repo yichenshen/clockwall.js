@@ -35,10 +35,12 @@
     }
 
     Clock.prototype.turn = function(hand, angle, time, endFunc) {
-        this[hand+"Angle"] += angle;
-        
-        TweenLite.to(this[hand+"Hand"], time/1000, {raphael:{rotation: this[hand+"Angle"], globalPivot:{x: this.x, y: this.y}}})
-            .eventCallback("onComplete", endFunc(this));
+        if(angle === 0){
+            TweenLite.delayedCall(time/1000, endFunc(this));
+        } else{
+            console.log(time/1000);
+            TweenLite.to(this[hand+"Hand"], time/1000, {raphael:{rotation: "+="+angle, globalPivot:{x: this.x, y: this.y}}, ease:Linear.easeNone, onComplete: endFunc(this)});
+        }
     };
 
     Clock.prototype.resetCount = function(){
