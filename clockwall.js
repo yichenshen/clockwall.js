@@ -30,7 +30,6 @@
 
         paper.circle(x, y, CLOCK_SIZE).attr({"stroke" : "grey"});
         this.minHand = paper.path("M" + x + "," + y + "l0,-" + CLOCK_SIZE).attr({"stroke-width": "2"});
-        this.minHand.node.id = "aaa";
         this.hrHand = paper.path("M" + x + "," + y + "l0," + CLOCK_SIZE * HR_TO_MIN_RATIO).attr({"stroke-width": "2"});
     }
 
