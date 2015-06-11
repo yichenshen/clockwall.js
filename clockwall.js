@@ -36,9 +36,9 @@
 
     Clock.prototype.turn = function(hand, angle, time, endFunc) {
         this[hand+"Angle"] += angle;
-        var anim = Raphael.animation({"transform": "r" + this[hand+"Angle"] + "," + this.x + "," + this.y}, time, endFunc(this));
-        this[hand+"Hand"].animate(anim);
-
+        
+        TweenLite.to(this[hand+"Hand"], time/1000, {raphael:{rotation: this[hand+"Angle"], globalPivot:{x: this.x, y: this.y}}})
+            .eventCallback("onComplete", endFunc(this));
     };
 
     Clock.prototype.resetCount = function(){
