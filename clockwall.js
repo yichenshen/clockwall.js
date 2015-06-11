@@ -76,8 +76,8 @@
         return func;
     };
 
-    env.clockwall = function(width, height) {
-        this.paper = Raphael(20, 20, width, height);
+    env.Clockwall = function(container, width, height) {
+        this.paper = Raphael(container, width, height);
 
         var select = Math.floor(Math.random()*schemes.length);
 
