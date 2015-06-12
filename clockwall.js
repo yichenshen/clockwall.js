@@ -32,15 +32,15 @@
         this.hrHand = paper.path("M" + x + "," + y + "l0," + CLOCK_SIZE * HR_TO_MIN_RATIO).attr({"stroke-width": "2"});
     }
 
-    Clock.prototype.queueTurnMin = function(angle, time) {
+    Clock.prototype.queueTurnMin = function(angle, time, tl) {
         
-        TweenLite.to(this.minHand, time/1000, {raphael:{rotation: "+="+angle, globalPivot:{x: this.x, y: this.y}}, ease:Linear.easeNone, delay:this.minDelay/1000});
+        tl.to(this.minHand, time/1000, {raphael:{rotation: "+="+angle, globalPivot:{x: this.x, y: this.y}}, ease:Linear.easeNone}, this.minDelay/1000);
 
         this.minDelay += time;
     };
 
-    Clock.prototype.queueTurnHr = function(angle, time){
-        TweenLite.to(this.hrHand, time/1000, {raphael:{rotation: "+="+angle, globalPivot:{x: this.x, y: this.y}}, ease:Linear.easeNone, delay:this.hrDelay/1000});
+    Clock.prototype.queueTurnHr = function(angle, time, tl){
+        tl.to(this.hrHand, time/1000, {raphael:{rotation: "+="+angle, globalPivot:{x: this.x, y: this.y}}, ease:Linear.easeNone}, this.hrDelay/1000);
 
         this.hrDelay += time;
     }
@@ -48,21 +48,23 @@
     function Scheme(minData, hrData){
         this.minData = minData;
         this.hrData = hrData;
+        this.timeLine = new TimelineLite();
     }
 
     Scheme.prototype.animate = function(clocks){
+        
         for(var i = 0; i < clocks.length; i++){
             for(var j = 0; j < clocks[i].length; j++){
                 var minList = this.minData[i][j];
                
                 for(var k = 0; k < minList.length; k++){
-                   clocks[i][j].queueTurnMin(minList[k][0], minList[k][1]);
+                   clocks[i][j].queueTurnMin(minList[k][0], minList[k][1], this.timeLine);
                 }
 
                 var hrList = this.hrData[i][j];
 
                 for(var k = 0; k < hrList.length; k++){
-                    clocks[i][j].queueTurnHr(hrList[k][0], hrList[k][1]);
+                    clocks[i][j].queueTurnHr(hrList[k][0], hrList[k][1], this.timeLine);
                 }
             }
         }
